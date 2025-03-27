@@ -48,7 +48,7 @@ jobs:
 
   post_run_metric_stage:
     name: Post Run Metric Stage
-    needs: deploy_uat
+    # needs: deploy_uat
     runs-on: ubuntu-latest
     steps:
       - name: Post Run Metric Stage

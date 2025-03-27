@@ -58,6 +58,8 @@ jobs:
     name: Create Prod Approval Request
     needs: post_run_metric_stage
     runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
       - uses: trstringer/manual-approval@v1
         with:

@@ -1,0 +1,121 @@
+name: Release Pipeline
+
+on:
+  push:
+    branches:
+      - release/*
+      - hotfix/*
+
+jobs:
+  build_code:
+    name: Build Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Code
+        run: echo "Building the code..."
+
+  code_analysis:
+    name: Code Analysis
+    needs: build_code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Analysis
+        run: echo "Running code analysis..."
+
+  unit_test:
+    name: Unit Test
+    needs: build_code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unit Test
+        run: echo "Running unit tests..."
+
+  build_push_snapshots:
+    name: Build & Push Snapshots to Artifactory
+    needs: [unit_test, code_analysis]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build & Push Snapshots to Artifactory
+        run: echo "Building and pushing snapshots to Artifactory..."
+
+  deploy_uat:
+    name: Deploy to UAT
+    needs: build_push_snapshots
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to UAT
+        run: echo "Deploying to UAT environment..."
+
+  post_run_metric_stage:
+    name: Post Run Metric Stage
+    needs: deploy_uat
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post Run Metric Stage
+        run: echo "Posting run metrics for stage..."
+
+  create_prod_approval_request:
+    name: Create Prod Approval Request
+    needs: post_run_metric_stage
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Create Prod Approval Request
+        run: echo "Waiting for manual approval before proceeding"
+
+  sending_approval_notification:
+    name: Sending Approval Notification
+    needs: post_run_metric_stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sending Approval Notification
+        run: echo "Sending approval notification..."
+
+  push_prod_artifactory:
+    name: Push Prod to Artifactory
+    needs: [sending_approval_notification, create_prod_approval_request]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push Prod to Artifactory
+        run: echo "Pushing production build to Artifactory..."
+
+  deploy_prod:
+    name: Deploy to Prod
+    needs: push_prod_artifactory
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Prod
+        run: echo "Deploying to production environment..."
+
+  post_run_metric_prod:
+    name: Post Run Metric Prod
+    needs: deploy_prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post Run Metric Prod
+        run: echo "Posting production run metrics..."
+
+  create_pr_release_to_main:
+    name: Create PR from Release to Main
+    needs: post_run_metric_prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR from Release to Main
+        run: echo "Creating pull request from release to main..."
+
+  # rollback:
+  #   name: Rollback
+  #   needs: deploy_prod  # Can be triggered if deploy to prod fails
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Rollback
+  #       run: echo "Rolling back deployment..."
+
+  # post_run_metric_rollback:
+  #   name: Post Run Metric Rollback
+  #   needs: rollback
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Post Run Metric Rollback
+  #       run: echo "Posting rollback run metrics..."

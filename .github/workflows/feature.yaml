@@ -1,0 +1,30 @@
+name: Feature Workflow
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  build_code:
+    name: Build Code  # Pretty name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Code
+        run: echo "Building the code..."
+
+  code_analysis:
+    name: Code Analysis
+    needs: build_code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Analysis
+        run: echo "Running code analysis..."
+
+  unit_test:
+    name: Unit Test
+    needs: build_code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Unit Test
+        run: echo "Running unit tests..."

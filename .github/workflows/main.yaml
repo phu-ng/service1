@@ -4,7 +4,9 @@ on:
   workflow_dispatch:  # This triggers the workflow manually from GitHub UI
   push:
     branches:
-      - main
+      - feature/*
+      - develop
+      - release/*
 
 permissions:
   id-token: write

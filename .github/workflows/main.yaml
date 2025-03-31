@@ -27,6 +27,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Tag
-        run: echo "release_tag=${GITHUB_REF_NAME#release/*/}"
+        run: echo "release_tag=${GITHUB_REF_NAME#release/}"
 
 

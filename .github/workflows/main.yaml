@@ -15,8 +15,18 @@ permissions:
   actions: read
 
 jobs:
-  call_pipeline:
-    uses: phu-ng/cicd-scripts/.github/workflows/main.yaml@main
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-#    secrets: inherit
+#  call_pipeline:
+#    uses: phu-ng/cicd-scripts/.github/workflows/main.yaml@main
+#    secrets:
+#      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+##    secrets: inherit
+  set-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Tag
+        run: echo "release_tag=${GITHUB_REF#refs/*/}"
+
+
